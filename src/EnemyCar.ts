@@ -1,5 +1,6 @@
 import { Car } from "./Car";
 
+// EnemyCar class to represent the Enemy cars in the game
 export class EnemyCar extends Car {
   constructor(
     x: number,
@@ -11,9 +12,5 @@ export class EnemyCar extends Car {
     ctx: CanvasRenderingContext2D
   ) {
     super(x, y, width, height, speed, imageSrc, ctx);
-  }
-
-  move() {
-    this.Y += 1 * this.speed;
   }
 }

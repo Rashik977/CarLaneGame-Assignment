@@ -1,5 +1,6 @@
 import { Rectangle } from "./Rectangle";
 
+// Road class to draw the road on the canvas
 export class Road {
   private x: number;
   private road: Rectangle[] = [];
@@ -18,6 +19,7 @@ export class Road {
     this.speed = speed;
   }
 
+  // Populate the road with white rectangles
   populateRoad() {
     for (let i = 0; i < 10; i++) {
       const rect = new Rectangle(10, 50, "white", this.x, i * 150);
@@ -25,6 +27,7 @@ export class Road {
     }
   }
 
+  // Create the road by drawing the rectangles and moving them down
   createRoad() {
     for (let i = 0; i < this.road.length; i++) {
       this.road[i].draw(this.ctx);

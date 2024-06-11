@@ -1,3 +1,4 @@
+// Rectangle box class to draw the road
 export class Rectangle {
   private width: number;
   private height: number;

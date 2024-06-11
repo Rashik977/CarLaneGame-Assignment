@@ -1,5 +1,6 @@
 import { Car } from "./Car";
 
+// PlayerCar class to represent the Player car in the game
 export class PlayerCar extends Car {
   public dx: number = 0;
   public dy: number = 0;
@@ -14,7 +15,7 @@ export class PlayerCar extends Car {
   ) {
     super(x, y, width, height, speed, imageSrc, ctx);
   }
-  // Update the Car position
+  // Update the Car's x position
   update() {
     this.X += this.dx;
   }
@@ -25,6 +26,7 @@ export class PlayerCar extends Car {
     this.dx = 1 * this.speed;
   }
 
+  // Listen for the keydown event to move the car
   move() {
     this.update();
     window.addEventListener("keydown", (e) => {

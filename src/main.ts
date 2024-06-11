@@ -3,20 +3,22 @@ import { Road } from "./Road";
 import { PlayerCar } from "./PlayerCar";
 import { EnemyCar } from "./EnemyCar";
 import { RandomNumber } from "./utils";
+
+// Get the canvas element and its context
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
+// Set the canvas width, height and background color
 canvas.width = 600;
 canvas.height = 900;
 canvas.style.backgroundColor = "black";
 
+// Game variables
 let gameSpeed = 1;
+let score = 0;
+let gameRunning = true;
 
-const road1 = new Road(200, ctx, canvas, gameSpeed);
-const road2 = new Road(400, ctx, canvas, gameSpeed);
-
-const player1 = new PlayerCar(200, 700, 250, 250, 1, "Car.png", ctx);
-
+// Enemy car images
 const enemyImg: string[] = [
   "enemy-1.png",
   "enemy-2.png",
@@ -26,9 +28,24 @@ const enemyImg: string[] = [
 ];
 
 const enemyCars: EnemyCar[] = [];
-
 const lanes = [0, 1, 2];
 
+// Enemy car spawn variables
+let lastEnemySpawnTime = 0;
+const baseEnemySpawnInterval = 6000;
+
+// Creating the road
+const road1 = new Road(200, ctx, canvas, gameSpeed);
+const road2 = new Road(400, ctx, canvas, gameSpeed);
+
+// Populating the road with white rectangles
+road1.populateRoad();
+road2.populateRoad();
+
+// Creating the player car
+const player1 = new PlayerCar(200, 700, 250, 250, 1, "Car.png", ctx);
+
+// add enemy car to the game
 function addEnemyCar() {
   for (let i = lanes.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -52,6 +69,7 @@ function addEnemyCar() {
   }
 }
 
+// Update the enemy car's position and remove them if they go out of the canvas
 function updateEnemy() {
   for (let i = enemyCars.length - 1; i >= 0; i--) {
     const car = enemyCars[i];
@@ -59,50 +77,68 @@ function updateEnemy() {
 
     if (car.Y > canvas.height) {
       enemyCars.splice(i, 1);
+      score++;
     }
   }
 }
 
-// setInterval(() => {
-//   console.log("Adding Enemy Car", gameSpeed);
-//   addEnemyCar();
-// }, 5000 / gameSpeed);
+// Draw the score on the canvas
+function drawScore() {
+  ctx.fillStyle = "white";
+  ctx.font = "30px Arial";
+  ctx.fillText("Score: " + score, 10, 30);
+}
 
-road1.populateRoad();
-road2.populateRoad();
-let lastEnemySpawnTime = 0;
-const baseEnemySpawnInterval = 6000; // Base interval in milliseconds
+// Game over function
+function gameOver() {
+  gameRunning = false;
+  ctx.fillStyle = "red";
+  ctx.font = "50px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2);
+  ctx.fillStyle = "white";
+  ctx.font = "30px Arial";
+  ctx.fillText("Score: " + score, canvas.width / 2, canvas.height / 2 + 50);
 
+  // Reload the game after 2 seconds
+  setTimeout(() => {
+    location.reload();
+  }, 2000);
+}
+
+// Update function to update the game objects
 function update(timestamp: number) {
+  if (!gameRunning) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   road2.createRoad();
   road1.createRoad();
   road1.speed = gameSpeed;
   road2.speed = gameSpeed;
+  player1.wallCollision(canvas.width);
   player1.draw();
-  // player1.drawCollisionBox();
+
   player1.move();
   player1.speed = gameSpeed;
   updateEnemy();
   for (let i = 0; i < enemyCars.length; i++) {
     enemyCars[i].draw();
-    // enemyCars[i].drawCollisionBox();
+
     if (player1.isCollidingWith(enemyCars[i])) {
       console.log("Game Over");
+      gameOver();
     }
   }
-  // Calculate the elapsed time since the last enemy car was spawned
+
   const elapsedTime = timestamp - lastEnemySpawnTime;
   const enemySpawnInterval = baseEnemySpawnInterval / gameSpeed;
 
   if (elapsedTime >= enemySpawnInterval) {
-    console.log("Adding Enemy Car", gameSpeed);
     addEnemyCar();
     lastEnemySpawnTime = timestamp;
   }
-  if (gameSpeed < 5) gameSpeed += 0.001;
+  if (gameSpeed < 5) gameSpeed += 0.0003;
+  drawScore();
   requestAnimationFrame(update);
 }
 
-// Start the game loop
 requestAnimationFrame(update);

@@ -1,3 +1,4 @@
+// Purpose: Car class to represent the player's car and the Enemy cars in the game.
 export class Car {
   private x: number;
   private y: number;
@@ -7,6 +8,7 @@ export class Car {
   private ctx: CanvasRenderingContext2D;
   public speed: number;
 
+  // Collision box properties
   private collisionX: number = 0;
   private collisionY: number = 0;
   private collisionWidth: number = 0;
@@ -58,11 +60,11 @@ export class Car {
     this.collisionY = y + this.offsetY;
   }
 
-  // Draw the Car
   draw() {
     this.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
   }
 
+  // Draw the collision box for debugging
   drawCollisionBox() {
     this.ctx.strokeStyle = "red";
     this.ctx.strokeRect(
@@ -71,6 +73,16 @@ export class Car {
       this.collisionWidth,
       this.collisionHeight
     );
+  }
+
+  // check for collision with the wall
+  wallCollision(canvasWidth: number) {
+    if (this.x < 0) {
+      this.x = 0;
+    }
+    if (this.x + this.width > canvasWidth) {
+      this.x = canvasWidth - this.width;
+    }
   }
 
   // Check for collision with another car
