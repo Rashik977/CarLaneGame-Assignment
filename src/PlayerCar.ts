@@ -19,10 +19,10 @@ export class PlayerCar extends Car {
     this.X += this.dx;
   }
   moveLeft() {
-    this.dx = -1;
+    this.dx = -1 * this.speed;
   }
   moveRight() {
-    this.dx = 1;
+    this.dx = 1 * this.speed;
   }
 
   move() {

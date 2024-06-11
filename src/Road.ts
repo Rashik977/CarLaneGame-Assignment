@@ -5,14 +5,17 @@ export class Road {
   private road: Rectangle[] = [];
   private ctx: CanvasRenderingContext2D;
   private canvas: HTMLCanvasElement;
+  public speed: number;
   constructor(
     x: number,
     ctx: CanvasRenderingContext2D,
-    canvas: HTMLCanvasElement
+    canvas: HTMLCanvasElement,
+    speed: number
   ) {
     this.x = x;
     this.ctx = ctx;
     this.canvas = canvas;
+    this.speed = speed;
   }
 
   populateRoad() {
@@ -25,7 +28,7 @@ export class Road {
   createRoad() {
     for (let i = 0; i < this.road.length; i++) {
       this.road[i].draw(this.ctx);
-      this.road[i].setY(this.road[i].getY() + 1);
+      this.road[i].setY(this.road[i].getY() + 1 * this.speed);
       if (this.road[i].getY() > this.canvas.height) {
         this.road[i].setY(-140);
       }
