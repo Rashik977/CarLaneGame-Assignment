@@ -1,24 +1,23 @@
-import './style.css'
-import typescriptLogo from './typescript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.ts'
+import "./style.css";
+import { Road } from "./Road";
+const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`
+canvas.width = 600;
+canvas.height = 900;
+canvas.style.backgroundColor = "black";
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+const road1 = new Road(200, ctx, canvas);
+const road2 = new Road(400, ctx, canvas);
+
+road1.populateRoad();
+road2.populateRoad();
+
+function update() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  road1.createRoad();
+  road2.createRoad();
+  requestAnimationFrame(update);
+}
+
+update();
