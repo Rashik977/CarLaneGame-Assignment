@@ -9,4 +9,5 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  background-image: linear-gradient(120deg, #65f689 0%, #1ecbaf 100%);
 }
