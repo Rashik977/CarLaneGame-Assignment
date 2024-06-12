@@ -155,10 +155,8 @@ function update(timestamp: number) {
   player1.move();
   player1.speed = gameSpeed;
   updateEnemy();
-  player1.drawCollisionBox();
   for (let i = 0; i < enemyCars.length; i++) {
     enemyCars[i].draw();
-    enemyCars[i].drawCollisionBox();
 
     if (player1.isCollidingWith(enemyCars[i])) {
       console.log("Game Over");
