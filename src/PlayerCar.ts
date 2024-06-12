@@ -37,11 +37,22 @@ export class PlayerCar extends Car {
         case "ArrowRight":
           this.moveRight();
           break;
+        case "a":
+          this.moveLeft();
+          break;
+        case "d":
+          this.moveRight();
+          break;
       }
     });
 
     window.addEventListener("keyup", (e) => {
-      if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+      if (
+        e.key === "ArrowLeft" ||
+        e.key === "ArrowRight" ||
+        e.key === "a" ||
+        e.key === "d"
+      ) {
         this.dx = 0;
       }
     });

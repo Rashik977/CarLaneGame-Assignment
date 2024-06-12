@@ -16,7 +16,9 @@ canvas.style.backgroundColor = "black";
 // Game variables
 let gameSpeed = 1;
 let score = 0;
+let highScore = Number(localStorage.getItem("highScore"));
 let gameRunning = true;
+let gameStarted = false;
 
 // Enemy car images
 const enemyImg: string[] = [
@@ -85,8 +87,14 @@ function updateEnemy() {
 // Draw the score on the canvas
 function drawScore() {
   ctx.fillStyle = "white";
-  ctx.font = "30px Arial";
-  ctx.fillText("Score: " + score, 10, 30);
+  ctx.font = "20px Arial";
+  ctx.fillText("Score: " + score, 70, 50);
+}
+
+function drawHighScore() {
+  ctx.fillStyle = "white";
+  ctx.font = "20px Arial";
+  ctx.fillText("High Score: " + highScore, 95, 100);
 }
 
 // Game over function
@@ -99,15 +107,42 @@ function gameOver() {
   ctx.fillStyle = "white";
   ctx.font = "30px Arial";
   ctx.fillText("Score: " + score, canvas.width / 2, canvas.height / 2 + 50);
+  ctx.font = "20px Arial";
+  ctx.fillText(
+    "Press Enter to Restart",
+    canvas.width / 2,
+    canvas.height / 2 + 100
+  );
 
-  // Reload the game after 2 seconds
-  setTimeout(() => {
-    location.reload();
-  }, 2000);
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      gameRunning = true;
+      location.reload();
+    }
+  });
+}
+
+function startGame() {
+  ctx.fillStyle = "white";
+  ctx.font = "50px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText("Press Enter to Start", canvas.width / 2, canvas.height / 2);
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      gameStarted = true;
+      update(0);
+    }
+  });
 }
 
 // Update function to update the game objects
 function update(timestamp: number) {
+  if (!gameStarted) {
+    startGame();
+    console.log("Game Started");
+    return;
+  }
   if (!gameRunning) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   road2.createRoad();
@@ -120,11 +155,18 @@ function update(timestamp: number) {
   player1.move();
   player1.speed = gameSpeed;
   updateEnemy();
+  player1.drawCollisionBox();
   for (let i = 0; i < enemyCars.length; i++) {
     enemyCars[i].draw();
+    enemyCars[i].drawCollisionBox();
 
     if (player1.isCollidingWith(enemyCars[i])) {
       console.log("Game Over");
+      if (score > highScore) {
+        highScore = score;
+      }
+      localStorage.setItem("highScore", score.toString());
+
       gameOver();
     }
   }
@@ -138,6 +180,7 @@ function update(timestamp: number) {
   }
   if (gameSpeed < 5) gameSpeed += 0.0003;
   drawScore();
+  drawHighScore();
   requestAnimationFrame(update);
 }
 
