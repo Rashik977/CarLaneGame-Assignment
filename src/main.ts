@@ -14,7 +14,7 @@ canvas.height = 900;
 canvas.style.backgroundColor = "black";
 
 // Game variables
-let gameSpeed = 1;
+let gameSpeed = 20;
 let score = 0;
 let highScore = Number(localStorage.getItem("highScore"));
 let gameRunning = true;
@@ -34,7 +34,8 @@ const lanes = [0, 1, 2];
 
 // Enemy car spawn variables
 let lastEnemySpawnTime = 0;
-const baseEnemySpawnInterval = 6000;
+let lastFrameTime: number | null = null;
+const baseEnemySpawnInterval = 60000;
 
 // Creating the road
 const road1 = new Road(200, ctx, canvas, gameSpeed);
@@ -72,10 +73,10 @@ function addEnemyCar() {
 }
 
 // Update the enemy car's position and remove them if they go out of the canvas
-function updateEnemy() {
+function updateEnemy(deltaTime: number) {
   for (let i = enemyCars.length - 1; i >= 0; i--) {
     const car = enemyCars[i];
-    car.Y += 1 * gameSpeed;
+    car.Y += 1 * gameSpeed * 2 * deltaTime * 0.01;
 
     if (car.Y > canvas.height) {
       enemyCars.splice(i, 1);
@@ -138,23 +139,27 @@ function startGame() {
 
 // Update function to update the game objects
 function update(timestamp: number) {
+  if (!lastFrameTime) lastFrameTime = timestamp;
   if (!gameStarted) {
     startGame();
     console.log("Game Started");
     return;
   }
   if (!gameRunning) return;
+  const deltaTime = timestamp - lastFrameTime;
+  lastFrameTime = timestamp;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  road2.createRoad();
-  road1.createRoad();
+  road2.createRoad(deltaTime);
+  road1.createRoad(deltaTime);
   road1.speed = gameSpeed;
   road2.speed = gameSpeed;
   player1.wallCollision(canvas.width);
   player1.draw();
 
-  player1.move();
+  player1.move(deltaTime);
   player1.speed = gameSpeed;
-  updateEnemy();
+
+  updateEnemy(deltaTime);
   for (let i = 0; i < enemyCars.length; i++) {
     enemyCars[i].draw();
 
@@ -162,8 +167,8 @@ function update(timestamp: number) {
       console.log("Game Over");
       if (score > highScore) {
         highScore = score;
+        localStorage.setItem("highScore", score.toString());
       }
-      localStorage.setItem("highScore", score.toString());
 
       gameOver();
     }
@@ -173,10 +178,11 @@ function update(timestamp: number) {
   const enemySpawnInterval = baseEnemySpawnInterval / gameSpeed;
 
   if (elapsedTime >= enemySpawnInterval) {
+    console.log("Enemy Spawned");
     addEnemyCar();
     lastEnemySpawnTime = timestamp;
   }
-  if (gameSpeed < 5) gameSpeed += 0.0003;
+  if (gameSpeed < 100) gameSpeed += 0.01;
   drawScore();
   drawHighScore();
   requestAnimationFrame(update);

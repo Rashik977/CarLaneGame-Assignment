@@ -16,19 +16,19 @@ export class PlayerCar extends Car {
     super(x, y, width, height, speed, imageSrc, ctx);
   }
   // Update the Car's x position
-  update() {
-    this.X += this.dx;
+  update(deltaTime: number) {
+    this.X += this.dx * deltaTime * 0.01;
   }
   moveLeft() {
-    this.dx = -1 * this.speed;
+    this.dx = -1 * this.speed * 3;
   }
   moveRight() {
-    this.dx = 1 * this.speed;
+    this.dx = 1 * this.speed * 3;
   }
 
   // Listen for the keydown event to move the car
-  move() {
-    this.update();
+  move(deltaTime: number) {
+    this.update(deltaTime);
     window.addEventListener("keydown", (e) => {
       switch (e.key) {
         case "ArrowLeft":

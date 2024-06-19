@@ -21,19 +21,21 @@ export class Road {
 
   // Populate the road with white rectangles
   populateRoad() {
-    for (let i = 0; i < 10; i++) {
-      const rect = new Rectangle(10, 50, "white", this.x, i * 150);
+    for (let i = 0; i < 8; i++) {
+      const rect = new Rectangle(8, 40, "white", this.x, i * 160);
       this.road.push(rect);
     }
   }
 
   // Create the road by drawing the rectangles and moving them down
-  createRoad() {
+  createRoad(deltaTime: number) {
     for (let i = 0; i < this.road.length; i++) {
       this.road[i].draw(this.ctx);
-      this.road[i].setY(this.road[i].getY() + 1 * this.speed);
+      this.road[i].setY(
+        this.road[i].getY() + 1 * this.speed * deltaTime * 0.01
+      );
       if (this.road[i].getY() > this.canvas.height) {
-        this.road[i].setY(-140);
+        this.road[i].setY(-160);
       }
     }
   }
